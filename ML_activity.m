@@ -3,11 +3,9 @@
 clear all
 
 %% Load data
-
 load('mnist.mat')
 
 %% Generate matrices
-
 idx = trainY == 4 | trainY == 9;
 A = double(trainX(idx,:));
 b = double(trainY(idx));
@@ -17,7 +15,6 @@ Atest = double(testX(idx,:));
 btest = double(testY(idx));
 
 %% Change labels
-
 b_backup = b;
 
 idx = b == 4;
@@ -33,7 +30,6 @@ idx = btest == 9;
 btest(idx) = -1;
 
 %% De-biasing & normalizing
-
 [m, n] = size(A);
 
 % Remove bias
@@ -51,7 +47,6 @@ Atest = Atest ./ (ones(mtest,1)*Astd); % remove variance (test)
 Atest(isnan(Atest))=0; % replace NaNs with 0's
 
 %% Linear regression
-
 b = b';
 btest = btest';
 
@@ -59,21 +54,16 @@ xLS = A\b;
 
 loss = norm(A*xLS-b)^2;
 
-% [misclassifiedTrain, missclassRateTrain] = classifier(A, b, xLS);
-% [missclassifiedTest, missclassRateTest] = classifier(Atest, btest, xLS);
-
 missclassRateTrain = classifier(A, b, xLS);
 missclassRateTest = classifier(Atest, btest, xLS);
 
 table(missclassRateTrain, missclassRateTest, 'VariableNames', {'Train', 'Test'})
 
 %% Readjust labels for logistic regression
-
-b = (b+1)/2; % readjust b to 0,1 labels rather than -1,1
+b = (b+1)/2;  % readjust b to 0,1 labels rather than -1,1
 btest = (btest+1)/2;
 
 %% Gradient descent
-
 xk = zeros(n, 1);
 alpha = 1/m;
 
@@ -102,7 +92,6 @@ for i = 1:1000
 end
 
 %% Plot & misclassification rates for Gradient Descent
-
 close all
 
 plot(1:1000, losses, 'linewidth', 2);
@@ -116,7 +105,6 @@ missclassRateTest_GD = classifier3(Atest, btest, results(:,end));
 table(missclassRateTrain_GD, missclassRateTest_GD, 'VariableNames', {'Train', 'Test'})
 
 %% Plot & misclassification rates for Gradient Descent with Linesearch
-
 s = 1;
 alpha = 0.5;
 beta = 0.5;
@@ -159,7 +147,6 @@ for i = 1:1000
 end
 
 %% Plot 
-
 close all
 
 plot(1:1000, losses2, 'linewidth', 2);
